@@ -1,5 +1,10 @@
 # Time-Series Model Audit
 
+[![CI](https://github.com/l1635733654-debug/time-series-model-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/l1635733654-debug/time-series-model-audit/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/l1635733654-debug/time-series-model-audit?display_name=tag)](https://github.com/l1635733654-debug/time-series-model-audit/releases)
+
+Current release: `v0.1.0`
+
 Reproducible diagnostics for time-series machine-learning projects.
 
 This project helps answer two questions before model tuning:
@@ -16,6 +21,8 @@ The toolkit provides:
 - JSON reports that can be checked into CI or attached to a model review.
 
 The repository contains no private, competition, customer, or financial dataset. The demo uses synthetic data only.
+
+See [use cases and limitations](docs/use-cases.md) for guidance on when these diagnostics are appropriate.
 
 ## Install
 
@@ -56,6 +63,8 @@ python -m ts_model_audit.cli regression-validation \
 
 The CLI does not assume that a random split is a valid estimate of deployment performance. It reports several protocols side by side so the decision is visible.
 
+The complete runnable example is documented in [examples/README.md](examples/README.md).
+
 ## Interpreting the reports
 
 - A high adversarial domain AUC means the train/test boundary is easy to predict from features. Investigate drift, collection changes, leakage, or a mismatch between the evaluation window and deployment.
@@ -71,6 +80,8 @@ ruff check .
 ```
 
 The project is intentionally small and dependency-light. Pull requests should include a test or a reproducible example for new metrics and should avoid committing source datasets.
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Release history is maintained in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
