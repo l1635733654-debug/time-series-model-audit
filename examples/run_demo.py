@@ -12,7 +12,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from ts_model_audit import audit_domain_shift, evaluate_regression_protocols  # noqa: E402
+from ts_model_audit import audit_domain_shift, evaluate_regression_protocols
 
 
 def main() -> None:

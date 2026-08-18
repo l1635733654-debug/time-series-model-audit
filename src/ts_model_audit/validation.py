@@ -2,18 +2,18 @@
 
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
 from sklearn.base import clone
-from sklearn.ensemble import GradientBoostingRegressor, HistGradientBoostingRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.impute import SimpleImputer
 from sklearn.linear_model import BayesianRidge, HuberRegressor, Ridge
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import KFold, TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.impute import SimpleImputer
 
 
 def make_pipeline(model) -> Pipeline:
@@ -109,8 +109,8 @@ def evaluate_regression_protocols(
                 prediction = fitted.predict(valid_x)
                 fold_rows.append(
                     {
-                        "n_train": int(len(train_idx)),
-                        "n_valid": int(len(valid_idx)),
+                        "n_train": len(train_idx),
+                        "n_valid": len(valid_idx),
                         **_metrics(y.iloc[valid_idx], prediction),
                     }
                 )
@@ -128,7 +128,7 @@ def evaluate_regression_protocols(
             }
         report[protocol] = protocol_report
     return {
-        "rows": int(len(numeric)),
+        "rows": len(numeric),
         "features": list(numeric.columns),
         "target_mean": float(y.mean()),
         "target_std": float(y.std(ddof=1)),

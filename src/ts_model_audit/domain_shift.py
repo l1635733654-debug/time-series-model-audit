@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
@@ -136,9 +136,9 @@ def audit_domain_shift(
         raise ValueError("No common numeric feature columns were found")
     smd = standardized_mean_difference(train_features, test, columns)
     report = {
-        "train_rows": int(len(train)),
-        "test_rows": int(len(test)),
-        "feature_count": int(len(columns)),
+        "train_rows": len(train),
+        "test_rows": len(test),
+        "feature_count": len(columns),
         "features": columns,
         "adversarial_oof_auc": adversarial_domain_auc(
             train_features, test, columns, random_state
