@@ -39,15 +39,19 @@ def adversarial_domain_auc(
     columns = list(columns)
     if not columns:
         raise ValueError("No common numeric feature columns were found")
+    smallest_domain = min(len(train), len(test))
+    if smallest_domain < 2:
+        raise ValueError("train and test must each contain at least 2 rows")
 
     combined = pd.concat(
         [_numeric_frame(train, columns), _numeric_frame(test, columns)],
         ignore_index=True,
     )
     labels = np.r_[np.zeros(len(train), dtype=int), np.ones(len(test), dtype=int)]
-    folds = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_state)
+    n_splits = min(5, smallest_domain)
+    folds = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=random_state)
     classifier = make_pipeline(
-        SimpleImputer(strategy="median"),
+        SimpleImputer(strategy="median", keep_empty_features=True),
         HistGradientBoostingClassifier(
             max_iter=200,
             learning_rate=0.05,
@@ -124,6 +128,8 @@ def audit_domain_shift(
 ) -> dict:
     """Build a JSON-serializable domain-shift report."""
 
+    if target is not None and target not in train.columns:
+        raise ValueError(f"target column not found in training data: {target}")
     train_features = train.drop(columns=[target], errors="ignore") if target else train
     columns = [
         name
@@ -135,6 +141,7 @@ def audit_domain_shift(
     if not columns:
         raise ValueError("No common numeric feature columns were found")
     smd = standardized_mean_difference(train_features, test, columns)
+    available_smd = smd.dropna()
     report = {
         "train_rows": len(train),
         "test_rows": len(test),
@@ -143,9 +150,11 @@ def audit_domain_shift(
         "adversarial_oof_auc": adversarial_domain_auc(
             train_features, test, columns, random_state
         ),
+        "domain_cv_splits": min(5, len(train), len(test)),
         "top_standardized_mean_differences": {
-            str(name): float(value) for name, value in smd.head(20).items()
+            str(name): float(value) for name, value in available_smd.head(20).items()
         },
+        "smd_unavailable_features": [str(name) for name in smd.index[smd.isna()]],
         "count_smd_gt_0_5": int((smd > 0.5).sum()),
         "count_smd_gt_1_0": int((smd > 1.0).sum()),
         "clipping": clipping_rates(train_features, test, columns=columns),

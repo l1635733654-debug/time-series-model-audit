@@ -24,7 +24,11 @@ ts-model-audit domain-shift \
 ts-model-audit regression-validation \
   --data data/series.csv \
   --target target \
+  --n-splits 5 \
+  --gap 12 \
   --output reports/validation.json
 ```
 
 The input rows for regression validation must already be ordered chronologically. Keep private or restricted datasets outside this repository.
+
+`--gap` is the number of rows excluded between each expanding training window and its validation window. Choose it from the prediction horizon and feature construction process. If it is omitted, the CLI uses a conservative size-based default capped at 25 rows.

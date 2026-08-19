@@ -1,0 +1,36 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a problem. Do not attach private datasets.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide synthetic input and the smallest command or code sample that reproduces the issue.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: 0.1.1
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Python and operating system
+      placeholder: Python 3.12 on Ubuntu 24.04
+    validations:
+      required: true

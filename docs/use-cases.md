@@ -28,6 +28,8 @@ This reports the absolute difference in feature means divided by a pooled standa
 
 Expanding-window and gap-aware protocols preserve the direction of time. A large performance gap between random and chronological splits can indicate that a random split is too optimistic for the intended deployment setting.
 
+The gap should reflect the prediction horizon and any lookback or label-overlap risk. The CLI accepts explicit `--gap` and `--n-splits` values. The `blocked_kfold` result is included as a diagnostic comparison; because its training folds can contain rows on both sides of a validation block, it is not a substitute for expanding-window evaluation.
+
 ## What it does not do
 
 - It does not prove that a model is leak-free or deployable.

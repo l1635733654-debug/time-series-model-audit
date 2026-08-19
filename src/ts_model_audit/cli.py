@@ -13,9 +13,10 @@ from .validation import evaluate_regression_protocols
 
 
 def _write(report: dict, output: Path) -> None:
+    payload = json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False)
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    output.write_text(payload, encoding="utf-8")
+    print(payload)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -34,6 +35,13 @@ def main(argv: list[str] | None = None) -> None:
     validation.add_argument("--data", type=Path, required=True)
     validation.add_argument("--target", required=True)
     validation.add_argument("--output", type=Path, required=True)
+    validation.add_argument("--n-splits", type=int, default=5)
+    validation.add_argument(
+        "--gap",
+        type=int,
+        default=None,
+        help="rows excluded between each training and validation window",
+    )
 
     args = parser.parse_args(argv)
     if args.command == "domain-shift":
@@ -44,5 +52,14 @@ def main(argv: list[str] | None = None) -> None:
         data = pd.read_csv(args.data)
         if args.target not in data.columns:
             raise SystemExit(f"target column not found: {args.target}")
-        report = evaluate_regression_protocols(data.drop(columns=[args.target]), data[args.target])
+        report = evaluate_regression_protocols(
+            data.drop(columns=[args.target]),
+            data[args.target],
+            n_splits=args.n_splits,
+            gap=args.gap,
+        )
         _write(report, args.output)
+
+
+if __name__ == "__main__":
+    main()
